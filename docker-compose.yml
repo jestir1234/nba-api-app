@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:5.7
+
+    environment:
+      MYSQL_DATABASE: nba
+      MYSQL_ROOT_PASSWORD: kobeisthebest0122
+
+    ports:
+      - "3308:3306"
+      # Where our data will be persisted
+    volumes:
+      - nba-db:/var/lib/mysql
+# Names our volume
+volumes:
+  nba-db:
