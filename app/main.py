@@ -1,15 +1,30 @@
 from typing import Optional
 from fastapi import FastAPI
 from app.database import Base, Engine
-from app.environment import get_sqlalchemy_db_uri
+from app.routers import router
+from starlette.staticfiles import StaticFiles
+
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+def get_app() -> FastAPI:
+    # Create API
+    server = FastAPI(
+        title='NBA-app-api',
+        debug=bool,
+        docs_url='/nba-app-docs',
+        redoc_url='/nba-app-redocs'
+    )
+
+    server.include_router(router)
+
+    @server.get("/")
+    async def read_root():
+        return {"Hello": "World"}
+
+    return server
+
+
+app = get_app()

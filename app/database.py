@@ -11,8 +11,16 @@ SQLALCHEMY_DATABASE_URL: str = 'mysql+pymysql://{0}:{1}@{2}:3308/{3}'.format(  #
     ) 
 
 Engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL, 
+    pool_pre_ping=True
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=Engine)
 
 Base = declarative_base()
+
+def get_session():
+    try:
+        session = SessionLocal()
+        yield session
+    finally:
+        session.close()

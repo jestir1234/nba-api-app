@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint
 from app.database import Base
+import json
 
 class Player(Base):
     __tablename__ = 'player'
@@ -29,3 +30,16 @@ class Player(Base):
 
     def __repr__(self):
         return 'Player: %s' % self.name
+
+    def toJSON(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'year_start' : self.year_start,
+            'year_end' : self.year_end,
+            'position' : self.position,
+            'height' : self.height,
+            'weight' : self.weight,
+            'birth_date' : self.birth_date,
+            'college' : self.college
+        }

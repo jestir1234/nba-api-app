@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from app.environment import get_sqlalchemy_db_uri
-from app.models.per_game import PerGame
+from app.models.advanced import Advanced
 from app.models.player import Player
 import datetime
 
@@ -22,12 +22,12 @@ row_preview = None
 
 int_columns = {
     '2',
-    '8'
+    '7'
 }
 
 def get_headers():
     headers = []
-    with open('per_game_stats.csv') as csv_file:
+    with open('advanced_stats.csv') as csv_file:
         for idx, line in enumerate(csv_file):
             if idx == 0:
                 column_headers = line.split(',')
@@ -35,11 +35,12 @@ def get_headers():
                     headers.append(col)
         return headers
 
-with open('per_game_stats.csv') as csv_file:
+with open('advanced_stats.csv') as csv_file:
     csv_reader = csv.reader(csv_file)
     line_count = 0
     headers = get_headers()
     print('headers', headers)
+    print('# of headers', len(headers))
     for row in csv_reader:
         print('line_count', line_count)
         if line_count == 0:
@@ -52,10 +53,10 @@ with open('per_game_stats.csv') as csv_file:
                 print('here is the empty row...', row)
                 continue
             player = db.query(Player).filter(Player.name == row[0]).first()
-            season_stat = db.query(PerGame).filter(
+            season_stat = db.query(Advanced).filter(
                 and_(
-                    PerGame.name == row[0],
-                    PerGame.season == row[1]
+                    Advanced.name == row[0],
+                    Advanced.season == row[1]
                 )
             ).first()
 
@@ -77,9 +78,10 @@ with open('per_game_stats.csv') as csv_file:
                 else:
                     args.append(row[idx])
 
-            new_per_game = PerGame(*args)
-            db.add(new_per_game)
+            print('*args', args)
+            new_advanced = Advanced(*args)
+            db.add(new_advanced)
             db.commit()
-            db.refresh(new_per_game)
+            db.refresh(new_advanced)
 
     print('completed data dump of per_game')
